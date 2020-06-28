@@ -1,6 +1,6 @@
 const discord = require('discord.js');
 const client = new discord.Client();
-const prefix = 'don';
+const prefix = 'don ';
 const token = 'NzI2NTI4NjgxNjM5NjczOTA3.XvemqA.eCMW-Q10Y4Vn8n83UJprNjjJ4hY';
 
 const ytdl = require("ytdl-core")
@@ -10,63 +10,8 @@ client.on('ready', () =>{
     console.log('Bot online!');
 });
 
-// client.on('message', message =>{
-//     if(!message.content.startsWith(prefix) || message.author.bot) return;
-    
-//     let args = message.content.substring(prefix.length).split(" ");
-
-//     if(args[1] == 'salut'){
-//         message.channel.send('Salut!');
-//     }
-//     else if(args[1] == 'play'){
-
-//         function play(connection, message){
-//             var server = servers[message.guild.id];
-
-//             server.dispatcher = connection.play(ytdl(server.queue[0], {filter: "audioonly"}));
-//             server.queue.shift();
-//             server.dispatcher.on("end", function(){
-//                 if(server.queue[0]){
-//                     play(connection, message);
-//                 }else connection.disconnect();
-//             });
-//         }
-
-
-//         if(!args[2]){
-//             message.channel.send('Hey! You need to provide a link.');
-//             return;
-//         } 
-//         if(!message.member.voice.channel){
-//             message.channel.send('You need to be in a voice channel!');
-//             return;
-//         }
-
-//         if(!servers[message.guild.id]) servers[message.guild.id] = {
-//             queue: []
-//         }
-//         var server = servers[message.guild.id];
-
-//         if(!message.member.voice.connection) message.member.voice.channel.join().then(function(connection){
-//             play(connection, message);
-//         });
-//     }
-
-
-    
-//     else if(message.content.startsWith('don fuck you')){
-//         message.channel.send("Fuck you too!");
-//     }
-//     else if(message.content.startsWith('don fuck me')){
-//         message.channel.send("I am waiting in your bed bro!");
-//     }
-//     else if(message.content.startsWith('don i wanna be good')){
-//         message.channel.send("That's not gonna happen");
-//     }
-// });
 client.on('message', async message => {
-	if (message.author.bot) return;
-	if (!message.content.startsWith(prefix)) return;
+	if (message.author.bot || !message.content.startsWith(prefix)) return;
 
 	const serverQueue = queue.get(message.guild.id);
 
