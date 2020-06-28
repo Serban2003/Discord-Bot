@@ -1,7 +1,7 @@
 const discord = require('discord.js');
 const client = new discord.Client();
 const prefix = 'don ';
-const token = 'NzI2NTI4NjgxNjM5NjczOTA3.XvkPtw.j42955oiu_cPR-3le4vabA0hUgo';
+const token = '';
 
 const ytdl = require("ytdl-core")
 const queue = new Map();
@@ -34,6 +34,9 @@ client.on('message', async message => {
 				message.channel.send(`${member} was kicked for secret reasons!`)
 			}
 		}
+	}
+	else if (message.content === `${prefix}server`) {
+		message.channel.send(`Server name: ${message.guild.name}\nTotal members: ${message.guild.memberCount}`);
 	}
 	else if (message.content === `${prefix}user-info`) {
 		message.channel.send(`Your username: ${message.author.username}\nYour ID: ${message.author.id}`);
