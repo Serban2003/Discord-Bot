@@ -1,108 +1,46 @@
 const discord = require('discord.js');
 const client = new discord.Client();
 const prefix = 'don ';
-const token = 'NzI2NTI4NjgxNjM5NjczOTA3.XvemqA.eCMW-Q10Y4Vn8n83UJprNjjJ4hY';
+const token = 'NzI2NTI4NjgxNjM5NjczOTA3.XvkPtw.j42955oiu_cPR-3le4vabA0hUgo';
 
 const ytdl = require("ytdl-core")
 const queue = new Map();
+const serverID = "687717074440683651";
 
-client.on('ready', () =>{
-    console.log('Bot online!');
-});
+
+client.on("ready", () => {
+	client.user.setActivity("You", { type: "WATCHING"});
+	console.log("Don Joni is online!");
+})
 
 client.on('message', async message => {
 	if (message.author.bot || !message.content.startsWith(prefix)) return;
 
 	const serverQueue = queue.get(message.guild.id);
 
-	if (message.content.startsWith(`${prefix}play`)) {
-		execute(message, serverQueue);
+	if (message.content.startsWith(`${prefix}salut`)) {
+		let nickname = message.author.username;
+		message.channel.send(`Salut ${nickname}!`);
 		return;
-	} else if (message.content.startsWith(`${prefix}skip`)) {
-		skip(message, serverQueue);
-		return;
-	} else if (message.content.startsWith(`${prefix}stop`)) {
-		stop(message, serverQueue);
-		return;
-	} else {
-		message.channel.send('You need to enter a valid command!')
+	} 
+	else if(message.content.startsWith(`${prefix}kick`)){
+		
+		if (message.member.roles.cache.some(role => role.name === "The God")) {	
+			var	member = message.mentions.members.first();
+
+			if(member === undefined) message.channel.send('You need to tag someone!');
+			else {
+				member.kick();
+				message.channel.send(`${member} was kicked for secret reasons!`)
+			}
+		}
+	}
+	else if (message.content === `${prefix}user-info`) {
+		message.channel.send(`Your username: ${message.author.username}\nYour ID: ${message.author.id}`);
+	}
+	else {
+		message.channel.send('You need to enter a valid command!');
 	}
 });
-
-async function execute(message, serverQueue) {
-	const args = message.content.split(" ");
-
-	if (!message.member.voice.channel) return message.channel.send('You need to be in a voice channel to play music!');
-	
-	const songInfo =  await ytdl.getInfo(args[1]);
-	console.log(songInfo.video_url);
-	const song = {
-		title: songInfo.title,
-		url: songInfo.video_url,
-	};
-
-	if (!serverQueue) {
-		const queueContruct = {
-			textChannel: message.channel,
-			voiceChannel: message.member.voice.channel,
-			connection: null,
-			songs: [],
-			volume: 5,
-			playing: true,
-		};
-
-		queue.set(message.guild.id, queueContruct);
-
-		queueContruct.songs.push(song);
-
-		try {
-			var connection = await message.member.voice.channel.join();
-			queueContruct.connection = connection;
-			play(message.guild, queueContruct.songs[0]);
-		} catch (err) {
-			console.log(err);
-			queue.delete(message.guild.id);
-			return message.channel.send(err);
-		}
-	} else {
-		serverQueue.songs.push(song);
-		console.log(serverQueue.songs);
-		return message.channel.send(`${song.title} has been added to the queue!`);
-	}
-
-}
-
-function skip(message, serverQueue) {
-	if (!message.member.message.member.voice.channel) return message.channel.send('You have to be in a voice channel to stop the music!');
-	if (!serverQueue) return message.channel.send('There is no song that I could skip!');
-	serverQueue.connection.dispatcher.end();
-}
-
-function stop(message, serverQueue) {
-	if (!message.member.message.member.voice.channel) return message.channel.send('You have to be in a voice channel to stop the music!');
-	serverQueue.songs = [];
-	serverQueue.connection.dispatcher.end();
-}
-
-function play(guild, song) {
-	const serverQueue = queue.get(guild.id);
-
-	if (!song) {
-		serverQueue.message.member.voice.channel.leave();
-		queue.delete(guild.id);
-		return;
-	}
-
-	const dispatcher = serverQueue.connection.play(ytdl(song.url, 'audioonly'))
-		.on('end', () => {
-			console.log('Music ended!');
-			serverQueue.songs.shift();
-			play(guild, serverQueue.songs[0]);
-		})
-		.on('error', error => {
-			console.error(error);
-		});
-	dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
-}
 
 client.login(token);
